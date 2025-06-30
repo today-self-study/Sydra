@@ -10,10 +10,49 @@
       rel="stylesheet"
     />
     <script>
-      // uuid 등 경로로 접근 시에도 index.html처럼 보이게 함
-      if (location.pathname !== "/Sydra/" && !location.pathname.endsWith("index.html")) {
-        history.replaceState(null, "", "/Sydra/");
+      // UUID 정규식 (간단 버전)
+      function extractUUID(path) {
+        const uuidRegex = /([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/;
+        const match = path.match(uuidRegex);
+        return match ? match[1] : null;
       }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const uuid = extractUUID(location.pathname);
+        if (!uuid) return;
+
+        // 결과 표시 영역 생성
+        const form = document.querySelector("form");
+        const resultDiv = document.createElement("div");
+        resultDiv.className = "mt-4";
+        resultDiv.innerHTML = `
+          <label class="form-label fw-semibold">조회 결과 (UUID: <span class='text-primary'>${uuid}</span>)</label>
+          <textarea id="resultText" class="form-control" rows="8" readonly style="background:#f8f9fa"></textarea>
+          <div id="resultMsg" class="form-text text-danger mt-1"></div>
+        `;
+        form.parentNode.appendChild(resultDiv);
+
+        const resultText = resultDiv.querySelector("#resultText");
+        const resultMsg = resultDiv.querySelector("#resultMsg");
+        resultText.value = "조회 중...";
+
+        /*
+        // fetch로 데이터 요청 (임시 URL)
+        fetch(`/api/data/${uuid}`)
+          .then(res => {
+            if (!res.ok) throw new Error("데이터 없음");
+            return res.text();
+          })
+          .then(data => {
+            resultText.value = data;
+            resultMsg.textContent = "";
+          })
+          .catch(err => {
+            resultText.value = "";
+            resultMsg.textContent = err.message || "데이터를 불러올 수 없습니다.";
+          });
+        */
+      });
     </script>
   </head>
   <body class="bg-light">
