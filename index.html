@@ -4,11 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sydra</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <!-- Bootstrap CSS CDN -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
+    />
+    <!-- Bootstrap Icons CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     />
   </head>
   <body class="bg-light">
@@ -40,18 +45,37 @@
                   <button
                     type="button"
                     id="generateBtn"
-                    class="btn btn-primary btn-lg fw-bold"
+                    class="btn btn-primary btn-lg d-flex justify-content-center align-items-center"
+                    aria-label="Generate"
                   >
-                    Generate
+                    <i class="bi bi-shield-lock"></i>
                   </button>
                 </div>
               </form>
-              <div id="resultArea" class="mt-4" style="display:none;">
+              <div id="resultArea" class="mt-4" style="display: none">
                 <div class="input-group">
-                  <input type="text" id="resultUrl" class="form-control" readonly />
-                  <button class="btn btn-outline-secondary" type="button" id="copyBtn">복사</button>
+                  <input
+                    type="text"
+                    id="resultUrl"
+                    class="form-control"
+                    readonly
+                  />
+                  <button
+                    class="btn btn-outline-secondary d-flex justify-content-center align-items-center"
+                    type="button"
+                    id="copyBtn"
+                    aria-label="복사"
+                  >
+                    <i class="bi bi-clipboard"></i>
+                  </button>
                 </div>
-                <div id="copyMsg" class="text-success mt-2" style="display:none;">복사되었습니다!</div>
+                <div
+                  id="copyMsg"
+                  class="text-success mt-2"
+                  style="display: none"
+                >
+                  복사되었습니다!
+                </div>
               </div>
             </div>
           </div>
@@ -65,22 +89,24 @@
         return btoa(unescape(encodeURIComponent(str)));
       }
 
-      document.getElementById('generateBtn').addEventListener('click', function () {
-        const input = document.getElementById('inputText').value;
-        if (!input.trim()) return;
-        const encoded = base64Encode(input);
-        const url = `https://today-self-study.github.io/Sydra/${encoded}`;
-        document.getElementById('resultUrl').value = url;
-        document.getElementById('resultArea').style.display = 'block';
-        document.getElementById('copyMsg').style.display = 'none';
-      });
+      document
+        .getElementById("generateBtn")
+        .addEventListener("click", function () {
+          const input = document.getElementById("inputText").value;
+          if (!input.trim()) return;
+          const encoded = base64Encode(input);
+          const url = `https://today-self-study.github.io/Sydra/${encoded}`;
+          document.getElementById("resultUrl").value = url;
+          document.getElementById("resultArea").style.display = "block";
+          document.getElementById("copyMsg").style.display = "none";
+        });
 
-      document.getElementById('copyBtn').addEventListener('click', function () {
-        const url = document.getElementById('resultUrl').value;
+      document.getElementById("copyBtn").addEventListener("click", function () {
+        const url = document.getElementById("resultUrl").value;
         navigator.clipboard.writeText(url).then(function () {
-          document.getElementById('copyMsg').style.display = 'block';
+          document.getElementById("copyMsg").style.display = "block";
           setTimeout(() => {
-            document.getElementById('copyMsg').style.display = 'none';
+            document.getElementById("copyMsg").style.display = "none";
           }, 1500);
         });
       });
