@@ -19,25 +19,25 @@
 
       document.addEventListener("DOMContentLoaded", function () {
         const uuid = extractUUID(location.pathname);
-        if (!uuid) return;
-
+        const cardBody = document.getElementById("cardBody");
+        cardBody.innerHTML = "";
+        if (!uuid) {
+          cardBody.innerHTML = `<div class='alert alert-danger text-center fw-semibold'>잘못된 접근입니다. URL을 확인하세요.</div>`;
+          return;
+        }
         // 결과 표시 영역 생성
-        const form = document.querySelector("form");
         const resultDiv = document.createElement("div");
-        resultDiv.className = "mt-4";
+        resultDiv.className = "mt-2";
         resultDiv.innerHTML = `
           <label class="form-label fw-semibold">조회 결과 (UUID: <span class='text-primary'>${uuid}</span>)</label>
           <textarea id="resultText" class="form-control" rows="8" readonly style="background:#f8f9fa"></textarea>
           <div id="resultMsg" class="form-text text-danger mt-1"></div>
         `;
-        form.parentNode.appendChild(resultDiv);
-
+        cardBody.appendChild(resultDiv);
         const resultText = resultDiv.querySelector("#resultText");
-        const resultMsg = resultDiv.querySelector("#resultMsg");
         resultText.value = "조회 중...";
-
+        // fetch 부분은 주석 처리 유지
         /*
-        // fetch로 데이터 요청 (임시 URL)
         fetch(`/api/data/${uuid}`)
           .then(res => {
             if (!res.ok) throw new Error("데이터 없음");
@@ -67,29 +67,8 @@
             >
               Sydra
             </div>
-            <div class="card-body p-4">
-              <form>
-                <div class="mb-4">
-                  <label for="inputText" class="form-label fw-semibold"
-                    >보안 데이터</label
-                  >
-                  <textarea
-                    id="inputText"
-                    class="form-control"
-                    rows="10"
-                    placeholder="여기에 대량의 텍스트를 입력하세요..."
-                  ></textarea>
-                </div>
-                <div class="d-grid">
-                  <button
-                    type="button"
-                    id="generateBtn"
-                    class="btn btn-primary btn-lg fw-bold"
-                  >
-                    Generate
-                  </button>
-                </div>
-              </form>
+            <div class="card-body p-4" id="cardBody">
+              <!-- 동적으로 결과 또는 경고 메시지 삽입 -->
             </div>
           </div>
         </div>
