@@ -10,18 +10,22 @@
       rel="stylesheet"
     />
     <script>
-      // UUID 정규식 (간단 버전)
-      function extractUUID(path) {
-        const uuidRegex = /([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$/;
-        const match = path.match(uuidRegex);
-        return match ? match[1] : null;
+      // base64 디코딩 함수 (유니코드 대응)
+      function base64Decode(str) {
+        try {
+          return decodeURIComponent(escape(atob(str)));
+        } catch (e) {
+          return null;
+        }
       }
 
       document.addEventListener("DOMContentLoaded", function () {
-        const uuid = extractUUID(location.pathname);
+        // URL의 마지막 path segment 추출
+        const pathSegments = location.pathname.split('/');
+        const encoded = pathSegments[pathSegments.length - 1] || pathSegments[pathSegments.length - 2];
         const cardBody = document.getElementById("cardBody");
         cardBody.innerHTML = "";
-        if (!uuid) {
+        if (!encoded) {
           cardBody.innerHTML = `<div class='alert alert-danger text-center fw-semibold'>잘못된 접근입니다. URL을 확인하세요.</div>`;
           return;
         }
@@ -29,29 +33,21 @@
         const resultDiv = document.createElement("div");
         resultDiv.className = "mt-2";
         resultDiv.innerHTML = `
-          <label class="form-label fw-semibold">조회 결과 (UUID: <span class='text-primary'>${uuid}</span>)</label>
+          <label class="form-label fw-semibold">복호화 결과</label>
           <textarea id="resultText" class="form-control" rows="8" readonly style="background:#f8f9fa"></textarea>
           <div id="resultMsg" class="form-text text-danger mt-1"></div>
         `;
         cardBody.appendChild(resultDiv);
         const resultText = resultDiv.querySelector("#resultText");
-        resultText.value = "조회 중...";
-        // fetch 부분은 주석 처리 유지
-        /*
-        fetch(`/api/data/${uuid}`)
-          .then(res => {
-            if (!res.ok) throw new Error("데이터 없음");
-            return res.text();
-          })
-          .then(data => {
-            resultText.value = data;
-            resultMsg.textContent = "";
-          })
-          .catch(err => {
-            resultText.value = "";
-            resultMsg.textContent = err.message || "데이터를 불러올 수 없습니다.";
-          });
-        */
+        const resultMsg = resultDiv.querySelector("#resultMsg");
+        const decoded = base64Decode(encoded);
+        if (decoded === null) {
+          resultText.value = "";
+          resultMsg.textContent = "복호화에 실패했습니다. 올바른 URL인지 확인하세요.";
+        } else {
+          resultText.value = decoded;
+          resultMsg.textContent = "";
+        }
       });
     </script>
   </head>
